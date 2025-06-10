@@ -6,6 +6,12 @@ A machine learning-based web application that predicts the likelihood of an orde
 
 This project implements a predictive system that helps e-commerce businesses identify potential RTO cases before shipping. It uses various order parameters to predict whether an order is likely to be returned to origin, helping businesses optimize their delivery operations and reduce losses.
 
+Check out the live version of the app here:  
+👉 [Visit the Website](https://rtoclassificationsystem.streamlit.app/)
+
+Feel free to explore and let us know your thoughts!
+
+
 ### Features
 
 - Real-time RTO prediction
@@ -103,5 +109,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Dataset provided by [Your Source]
-- Special thanks to contributors and maintainers
+- Dataset provided by [EDGE]
