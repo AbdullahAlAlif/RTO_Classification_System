@@ -69,7 +69,7 @@ if st.button('Predict RTO'):
             'OrderConfirmDayOverPhone': order_confirm,
             'IsCartOrder': is_cart_order,
             'OrderFromPromotionalEvent': is_promotional,
-            'courierService': courier_service
+            ' courierService ': courier_service
         }
     
     try:
