@@ -1,16 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import xgboost as xgb
-from datetime import datetime
+from datetime import datetime, time
 from preprocess import preprocess_input
+import joblib
 
 # Set page title
 st.title('RTO Prediction System')
 
-# Load the XGBoost model
-model = xgb.XGBClassifier()
-model.load_model('models/xgboost_model.json')
+# Load the Random Forest model
+model = joblib.load('models/random_forest_model.pkl')
 
 # Create input form
 st.header('Enter Order Details')
@@ -38,22 +37,33 @@ with col1:
         'Sirajganj', 'Sunamganj', 'Sylhet (Outside City)', 'Sylhet City',
         'Tangail', 'Thakurgaon', 'khulna (Outside City)', 'khulna City'
     ])
+    # Add time input for OrderPlacedDay
+    order_placed = st.date_input('Order Placed Day')
+    order_placed_time = st.time_input('Order Placed Time', value=None, key='order_placed_time')
 
 with col2:
     order_source = st.selectbox('Order Source', ['android', 'desktop', 'mobile-site'])
     order_type = st.selectbox('Order Type', ['express', 'normal'])
     delivery_charge = st.number_input('Delivery Charge', min_value=0.0)
-    order_placed = st.date_input('Order Placed Day')
     order_confirm = st.date_input('Order Confirmation Day')
+    order_confirm_time = st.time_input('Order Confirmation Time', value=None, key='order_confirm_time')
     is_cart_order = st.selectbox('Is Cart Order', ['Yes', 'No'])
     is_promotional = st.selectbox('Is Promotional Order', ['Yes', 'No'])
     courier_service = st.text_input('Courier Service (Optional)')
 
+# Combine date and time for order_placed and order_confirm
+def combine_date_time(date_obj, time_obj):
+    if time_obj is None:
+        time_obj = time(0, 0)
+    return datetime.combine(date_obj, time_obj)
+
 # Create prediction button
 if st.button('Predict RTO'):
     # Validate dates
-    if order_confirm < order_placed:
-        st.error("Error: Order Confirmation Date cannot be earlier than Order Placed Date!")
+    order_placed_dt = combine_date_time(order_placed, order_placed_time)
+    order_confirm_dt = combine_date_time(order_confirm, order_confirm_time)
+    if order_confirm_dt < order_placed_dt:
+        st.error("Error: Order Confirmation Date/Time cannot be earlier than Order Placed Date/Time!")
     else:
         # Prepare input data
         input_data = {
@@ -65,8 +75,8 @@ if st.button('Predict RTO'):
             'OrderSource': order_source,
             'OrderType': order_type,
             'DeliveryCharge': delivery_charge,
-            'OrderPlacedDay': order_placed,
-            'OrderConfirmDayOverPhone': order_confirm,
+            'OrderPlacedDay': order_placed_dt,
+            'OrderConfirmDayOverPhone': order_confirm_dt,
             'IsCartOrder': is_cart_order,
             'OrderFromPromotionalEvent': is_promotional,
             ' courierService ': courier_service
@@ -95,7 +105,7 @@ if st.button('Predict RTO'):
                 risk_factors.append('- Mobile payment on delivery has higher RTO risk')
             if float(delivery_charge) > 100:
                 risk_factors.append('- High delivery charge may increase RTO risk')
-            if (order_confirm - order_placed).days > 2:
+            if (order_confirm_dt - order_placed_dt).days > 2:
                 risk_factors.append('- Long confirmation delay increases RTO risk')
             
             for factor in risk_factors:
