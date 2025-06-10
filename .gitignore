@@ -40,11 +40,9 @@ env/
 *.csv
 *.xlsx
 *.xls
-*.pkl
 *.h5
 
 # Model files
-*.pkl
 *.h5
 *.model
 *.joblib
