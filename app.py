@@ -51,22 +51,26 @@ with col2:
 
 # Create prediction button
 if st.button('Predict RTO'):
-    # Prepare input data
-    input_data = {
-        'OrderId': order_id,
-        'UserId': user_id,
-        'OrderValue': order_value,
-        'PaymentType': payment_type,
-        'District': district,
-        'OrderSource': order_source,
-        'OrderType': order_type,
-        'DeliveryCharge': delivery_charge,
-        'OrderPlacedDay': order_placed,
-        'OrderConfirmDayOverPhone': order_confirm,
-        'IsCartOrder': is_cart_order,
-        'OrderFromPromotionalEvent': is_promotional,
-        ' courierService ': courier_service
-    }
+    # Validate dates
+    if order_confirm < order_placed:
+        st.error("Error: Order Confirmation Date cannot be earlier than Order Placed Date!")
+    else:
+        # Prepare input data
+        input_data = {
+            'OrderId': order_id,
+            'UserId': user_id,
+            'OrderValue': order_value,
+            'PaymentType': payment_type,
+            'District': district,
+            'OrderSource': order_source,
+            'OrderType': order_type,
+            'DeliveryCharge': delivery_charge,
+            'OrderPlacedDay': order_placed,
+            'OrderConfirmDayOverPhone': order_confirm,
+            'IsCartOrder': is_cart_order,
+            'OrderFromPromotionalEvent': is_promotional,
+            'courierService': courier_service
+        }
     
     try:
         # Preprocess the input
