@@ -7,9 +7,6 @@ def preprocess_input(input_data):
     # Convert input to DataFrame
     dt = pd.DataFrame([input_data])
     
-    # Drop courierService as it was dropped in training
-    dt = dt.drop(' courierService ', axis=1)
-    
     # Calculate ConfirmationLatency in hours
     dt['OrderPlacedDay'] = pd.to_datetime(dt['OrderPlacedDay'])
     dt['OrderConfirmDayOverPhone'] = pd.to_datetime(dt['OrderConfirmDayOverPhone'])
@@ -20,7 +17,7 @@ def preprocess_input(input_data):
     dt = dt.drop(['OrderPlacedDay', 'OrderConfirmDayOverPhone'], axis=1)
     
     # Drop OrderId and UserId
-    dt = dt.drop(['OrderId', 'UserId'], axis=1)
+    dt = dt.drop(['OrderId', 'UserId'], axis=1, errors='ignore')
     
     # Convert boolean values to int
     boolean_cols = ['IsCartOrder', 'OrderFromPromotionalEvent']
